@@ -1,6 +1,7 @@
 # imitate https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=maa-assistant-arknights
 
 { stdenv
+, lib
 , fetchFromGitHub
 , cmake
 , opencv
@@ -9,6 +10,8 @@
 , zlib
 , asio
 , libcpr
+, python3
+, android-tools
 , }:
 
 let
@@ -60,6 +63,10 @@ in stdenv.mkDerivation rec {
     sed -i 's/RUNTIME\sDESTINATION\s\./ /g; s/LIBRARY\sDESTINATION\s\./ /g; s/PUBLIC_HEADER\sDESTINATION\s\./ /g' CMakeLists.txt
     sed -i 's/find_package(asio /# find_package(asio /g' CMakeLists.txt
     sed -i 's/asio::asio/ /g' CMakeLists.txt
+
+    find "src/MaaCore" \
+        \( -name '*.h' -or -name '*.cpp' -or -name '*.hpp' -or -name '*.cc' \) \
+        -exec sed -i 's/onnxruntime\/core\/session\///g' {} \;
   '';
 
   nativeBuildInputs = [
@@ -73,6 +80,8 @@ in stdenv.mkDerivation rec {
       zlib
       asio
       libcpr
+      python3
+      android-tools
     ];
 
     cmakeFlags = [
@@ -83,5 +92,23 @@ in stdenv.mkDerivation rec {
       "-DINSTALL_PYTHON=ON"
       "-DMAA_VERSION=v${version}"
     ];
+
+    postInstall = ''
+      cd $out
+      mkdir -p share/${pname}
+      mv Python share/${pname}
+      mv resource share/${pname}
+
+      cd share/${pname}
+      ln -s ../../lib/* .
+    '';
+
+    meta = with lib; {
+        description = "An Arknights assistant";
+        homepage = "https://github.com/MaaAssistantArknights/MaaAssistantArknights";
+        license = licenses.agpl3;
+        platforms = platforms.linux;
+        maintainers = with maintainers; [ Cryolitia ];
+      };
   
 }
