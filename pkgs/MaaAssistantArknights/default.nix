@@ -128,7 +128,7 @@ in stdenv.mkDerivation rec {
       cp -v ${maa-cli}/bin/* ./bin
       wrapProgram $out/bin/maa \
         --set lib_dir "$out/lib" \
-        --set resource_dir "$out/share/MaaAssistantArknights"
+        --set resource_dir "$out/share/${pname}/resource"
     '';
 
     meta = with lib; {
