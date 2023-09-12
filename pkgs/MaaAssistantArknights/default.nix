@@ -1,6 +1,7 @@
 # imitate https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=maa-assistant-arknights
 
-{ stdenv
+{ maintainers
+, stdenv
 , lib
 , fetchFromGitHub
 , cmake
@@ -13,6 +14,7 @@
 , python3
 , android-tools
 , rustPlatform
+, makeWrapper
 , }:
 
 let
@@ -88,6 +90,8 @@ in stdenv.mkDerivation rec {
 
   nativeBuildInputs = [
       cmake
+      maa-cli
+      makeWrapper
     ];
 
     buildInputs = [
@@ -99,7 +103,6 @@ in stdenv.mkDerivation rec {
       libcpr
       python3
       android-tools
-      maa-cli
     ];
 
     cmakeFlags = [
@@ -120,7 +123,12 @@ in stdenv.mkDerivation rec {
       cd share/${pname}
       ln -s ../../lib/* .
 
-      ls -al ${maa-cli}
+      cd $out
+      mkdir -p bin
+      cp -v ${maa-cli}/bin/* ./bin
+      wrapProgram $out/bin/maa \
+        --set lib_dir "$out/lib" \
+        --set resource_dir "$out/share/MaaAssistantArknights"
     '';
 
     meta = with lib; {
