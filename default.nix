@@ -16,6 +16,8 @@
 
   #example-package = pkgs.callPackage ./pkgs/example-package { };
   
-  MaaAssistantArknights = pkgs.callPackage ./pkgs/MaaAssistantArknights { };
+  MaaAssistantArknights = pkgs.callPackage ./pkgs/MaaAssistantArknights { 
+    inherit maintainers;
+  };
 
 }

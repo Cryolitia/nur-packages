@@ -12,6 +12,7 @@
 , libcpr
 , python3
 , android-tools
+, rustPlatform
 , }:
 
 let
@@ -45,6 +46,22 @@ let
       "-DBUILD_SHARED_LIBS=ON"
     ];
   
+  };
+
+  maa-cli = rustPlatform.buildRustPackage rec {
+
+    pname = "maa-cli";
+    version = "0.3.9";
+
+    src = fetchFromGitHub {
+      owner = "MaaAssistantArknights";
+      repo = "maa-cli";
+      rev = "v${version}";
+      sha256 = "sha256-2LsMGvGsJJmZ3EuiHAhr0NU2VKoNqGB6PhXCOHTWsqM=";
+    };
+
+    cargoSha256 = "sha256-hnFyUdSREqr0Qvzug1V59frVlxsWxrymh899jqCknew=";
+
   };
 
 in stdenv.mkDerivation rec {
@@ -82,6 +99,7 @@ in stdenv.mkDerivation rec {
       libcpr
       python3
       android-tools
+      maa-cli
     ];
 
     cmakeFlags = [
@@ -101,6 +119,8 @@ in stdenv.mkDerivation rec {
 
       cd share/${pname}
       ln -s ../../lib/* .
+
+      ls -al ${maa-cli}
     '';
 
     meta = with lib; {
