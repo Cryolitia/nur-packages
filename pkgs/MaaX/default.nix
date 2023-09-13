@@ -8,6 +8,7 @@
 , android-tools
 , makeWrapper
 , makeDesktopItem
+, copyDesktopItems
 , }:
 
 let
@@ -24,6 +25,7 @@ in stdenv.mkDerivation rec {
 
   nativeBuildInputs = [
       makeWrapper
+      copyDesktopItems
     ];
 
   buildInputs = [
@@ -42,7 +44,7 @@ in stdenv.mkDerivation rec {
       --set LD_LIBRARY_PATH "$LD_LIBRARY_PATH:${stdenv.cc.cc.lib}/lib/"
 
     mkdir -p $out/share/icons
-    ln -s $out/share/${pname}/dist/assets/icon.png $out/share/icons/MaaX.png
+    ln -s $out/share/${pname}/dist/renderer/assets/icon.png $out/share/icons/MaaX.png
 
     runHook postInstall
   '';
