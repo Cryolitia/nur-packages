@@ -62,7 +62,7 @@ let
       sha256 = "sha256-2LsMGvGsJJmZ3EuiHAhr0NU2VKoNqGB6PhXCOHTWsqM=";
     };
 
-    buildInputs = lib.optional stdenv.isDarwin pkgs.darwin.apple_sdk.frameworks.Security
+    buildInputs = lib.optional stdenv.isDarwin pkgs.darwin.apple_sdk.frameworks.Security;
 
     cargoSha256 = "sha256-hnFyUdSREqr0Qvzug1V59frVlxsWxrymh899jqCknew=";
 
