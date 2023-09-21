@@ -103,7 +103,7 @@ in stdenv.mkDerivation rec {
     libcpr
     python3
     android-tools
-  ];
+  ] ++ lib.optional pkgs.darwin.apple_sdk.frameworks.Security;
 
   cmakeFlags = [
     "-DCMAKE_BUILD_TYPE=None"
