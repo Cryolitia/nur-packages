@@ -68,7 +68,7 @@ let
       darwin.Security
     ];
 
-    cargoSha256 = "sha256-hnFyUdSREqr0Qvzug1V59frVlxsWxrymh899jqCknew=";
+    cargoSha256 = "sha256-WcBKWVnpBgYZZdWnWsXDTutyo34KQIcRmwYwc+fENJA=";
 
   };
 
