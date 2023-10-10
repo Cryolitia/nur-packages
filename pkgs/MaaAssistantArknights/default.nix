@@ -7,7 +7,6 @@
 , fetchFromGitHub
 , cmake
 , opencv
-, onnxruntime
 , zlib
 , asio
 , libcpr
@@ -15,11 +14,13 @@
 , android-tools
 , makeWrapper
 , range-v3
-, maaVersion ? "4.24.0"
-, maaSourceHash ? "sha256-I1HKYO+ywLVUKNl1FH66efAUd4je2d1ynnDEelHZfK8="
+, maaVersion ? "4.25.0"
+, maaSourceHash ? "sha256-NcfrpLgduemiEJ8jeLY14lZgs67ocZX+7SSIxSC2otk="
 }:
 
 let
+
+  onnxruntime = pkgs.callPackage ./onnxruntime-cuda.nix { };
 
   fastdeploy_ppocr = pkgs.callPackage ./fastdeploy_ppocr.nix { };
 
