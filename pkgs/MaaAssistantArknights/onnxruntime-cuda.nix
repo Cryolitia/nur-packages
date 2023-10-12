@@ -6,6 +6,8 @@
 , pythonSupport ? false
 }:
 
+# assert stdenv.hostPlatform.system == "x86_64-linux";
+
 let
 
   _CUDA_ARCHITECTURES="52-real;53-real;60-real;61-real;62-real;70-real;72-real;75-real;80-real;86-real;87-real;89-real;90-real;90-virtual";
