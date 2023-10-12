@@ -9,7 +9,7 @@
 , fetchzip
 }:
 
-assert stdenv.hostPlatform.system == "x86_64-linux";
+# assert stdenv.hostPlatform.system == "x86_64-linux";
 
 let
 
