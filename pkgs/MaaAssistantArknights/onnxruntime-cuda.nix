@@ -44,4 +44,36 @@ in (onnxruntime.override {
     })
   ];
 
+  dontStrip = true;
+
+  installPhase = ''
+    runHook preInstall
+
+    mkdir -pv $out
+    cp -rv ./* $out
+    rm -v $out/lib/libonnxruntime_providers_tensorrt.so
+
+    cp -rv ${src2}/include/* $out/include/
+
+    runHook postInstall
+  '';
+
+  meta = with lib; {
+    description = "Cross-platform, high performance scoring engine for ML models";
+    longDescription = ''
+      ONNX Runtime is a performance-focused complete scoring engine
+      for Open Neural Network Exchange (ONNX) models, with an open
+      extensible architecture to continually address the latest developments
+      in AI and Deep Learning. ONNX Runtime stays up to date with the ONNX
+      standard with complete implementation of all ONNX operators, and
+      supports all ONNX releases (1.2+) with both future and backwards
+      compatibility.
+    '';
+    homepage = "https://github.com/microsoft/onnxruntime";
+    changelog = "https://github.com/microsoft/onnxruntime/releases/tag/v${version}";
+    platforms = [ "x86_64-linux" ];
+    # broken = stdenv.hostPlatform.system != "x86_64-linux";
+    license = licenses.mit;
+  };
+
 })
