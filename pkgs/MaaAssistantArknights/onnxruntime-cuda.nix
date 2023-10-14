@@ -40,7 +40,7 @@ in (onnxruntime.override {
     # https://github.com/microsoft/onnxruntime/pull/17843
     (fetchpatch {
       url = "https://github.com/bverhagen/onnxruntime/commit/50d5eb3ffc19734e3f0009e800c50d626b12da14.patch";
-      sha256 = "sha256-ulQXZ6Bg4koKqSGr7CFKv02eGquHrtfp85BuQc2lJAg=";
+      sha256 = "sha256-Om8qmJPts7Ly3ljBsTaSL1FoyVclh3TzEy5cZ+FTi7w=";
     })
   ];
 
