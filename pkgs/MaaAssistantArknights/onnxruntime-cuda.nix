@@ -1,4 +1,5 @@
 { stdenv
+, gcc11Stdenv
 , onnxruntime
 , lib
 , fetchpatch
@@ -23,6 +24,7 @@ let
 in (onnxruntime.override {
 
   inherit pythonSupport;
+  stdenv = gcc11Stdenv;
 
 }).overrideAttrs (oldAttrs: rec {
 
