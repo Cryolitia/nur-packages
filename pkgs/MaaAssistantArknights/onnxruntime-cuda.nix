@@ -31,7 +31,7 @@ in (onnxruntime.override {
   requiredSystemFeatures = [ "big-parallel" ];
 
   cmakeFlags = oldAttrs.cmakeFlags ++ [
-    "-DCMAKE_CUDA_ARCHITECTURES==${with cudaPackages.cudaFlags; builtins.concatStringsSep ";" (map dropDot cudaCapabilities)}"
+    "-DCMAKE_CUDA_ARCHITECTURES=${with cudaPackages.cudaFlags; builtins.concatStringsSep ";" (map dropDot cudaCapabilities)}"
     "-DCMAKE_CUDA_STANDARD_REQUIRED=ON"
     "-DCMAKE_CXX_STANDARD_REQUIRED=ON"
     "-Donnxruntime_USE_CUDA=ON"
