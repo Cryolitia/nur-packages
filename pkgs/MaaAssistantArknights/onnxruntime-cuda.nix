@@ -5,6 +5,7 @@
 , fetchpatch
 , fetchFromGitHub
 , cudaPackages
+, symlinkJoin
 , pythonSupport ? false
 }:
 
@@ -21,6 +22,8 @@ let
     sha256 = "sha256-YPD5Sy6SvByjIcGtgeGH80TEKg2BtqJWSg46RvnJChY=";
   };
 
+  cuda = import ../common/cuda.nix { inherit cudaPackages; inherit symlinkJoin; };
+
 in (onnxruntime.override {
 
   inherit pythonSupport;
@@ -28,11 +31,9 @@ in (onnxruntime.override {
 
 }).overrideAttrs (oldAttrs: rec {
 
-  buildInputs = oldAttrs.buildInputs ++ (with cudaPackages;[
-    cudatoolkit
-    cudnn
-    nccl
-  ]);
+  nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [ cuda.cuda-native-redist ];
+
+  buildInputs = oldAttrs.buildInputs ++ [ cuda.cuda-redist ];
 
   requiredSystemFeatures = [ "big-parallel" ];
 
@@ -41,7 +42,7 @@ in (onnxruntime.override {
     "-DCMAKE_CUDA_STANDARD_REQUIRED=ON"
     "-DCMAKE_CXX_STANDARD_REQUIRED=ON"
     "-Donnxruntime_USE_CUDA=ON"
-    "-Donnxruntime_CUDA_HOME=${cudaPackages.cudatoolkit}"
+    "-Donnxruntime_CUDA_HOME=${cuda.cuda-redist}"
     "-Donnxruntime_CUDNN_HOME=${cudaPackages.cudnn}"
     "-DFETCHCONTENT_SOURCE_DIR_CUTLASS=${cutlass}"
     "-Donnxruntime_USE_NCCL=ON"
