@@ -27,9 +27,9 @@ in (onnxruntime.override {
 
 }).overrideAttrs (oldAttrs: rec {
 
-  nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [ cuda.cuda-native-redist ];
+  nativeBuildInputs = oldAttrs.nativeBuildInputs ++ cuda.cuda-native-redist;
 
-  buildInputs = oldAttrs.buildInputs ++ [ cuda.cuda-redist ];
+  buildInputs = oldAttrs.buildInputs ++ cuda.cuda-redist ;
 
   requiredSystemFeatures = [ "big-parallel" ];
 

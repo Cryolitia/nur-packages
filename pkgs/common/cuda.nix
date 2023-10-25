@@ -12,13 +12,10 @@ rec {
     cudnn # cudnn.h
   ];
 
-  cuda-native-redist = symlinkJoin {
-    name = "cuda-native-redist-${cudaPackages.cudaVersion}";
-    paths = with cudaPackages; [
+  cuda-native-redist = with cudaPackages; [
       cuda_cudart # cuda_runtime.h cuda_runtime_api.h
       cuda_nvcc
     ] ++ cuda-common-redist;
-  };
 
   cuda-redist = symlinkJoin {
     name = "cuda-redist-${cudaPackages.cudaVersion}";
