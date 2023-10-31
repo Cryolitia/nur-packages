@@ -55,8 +55,4 @@ rec {
   maa-cli = pkgs.callPackage ./pkgs/MaaAssistantArknights/maa-cli.nix { inherit maintainers; };
 
   rime-latex = pkgs.callPackage ./pkgs/rimePackages/rime-latex.nix { inherit maintainers; };
-
-  fcitx5-material-color = pkgs.callPackage ./pkgs/fcitx5/fcitx5-material-color.nix { inherit maintainers; };
-  
-  fcitx5-nord = pkgs.callPackage ./pkgs/fcitx5/fcitx5-nord.nix { inherit maintainers; };
 }
