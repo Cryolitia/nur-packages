@@ -15,7 +15,7 @@ in
 
   options = {
 
-    hardware.sensor.iio.bmi260 = mkOption {
+    hardware.sensor.iio.bmi260.enable = mkOption {
       default = false;
       type = types.bool;
       description = mdDoc ''
@@ -26,7 +26,7 @@ in
 
   ###### implementation
 
-  config = mkIf config.hardware.cpu.amd.ryzen-smu.enable {
+  config = mkIf config.hardware.sensor.iio.bmi260.enable {
     boot.extraModulePackages = [ bmi260 ];
     boot.kernelModules = [ "bmi260_core" "bmi260_i2c" ];
   };
