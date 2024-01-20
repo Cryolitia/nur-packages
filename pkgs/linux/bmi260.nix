@@ -35,7 +35,7 @@ stdenv.mkDerivation (finalAttr: {
   meta = with lib; {
     homepage = "https://github.com/hhd-dev/bmi260";
     description = "A kernel module driver for the Bosch BMI260 IMU";
-    license = with licenses; [ bsd3  ];
+    license = with licenses; [ bsd3 gpl2Only ];
     maintainers = with maintainers; [ Cryolitia ];
     platforms = platforms.linux;
     # This driver uses i2c_client_get_device_id(), which is only available above 6.2
