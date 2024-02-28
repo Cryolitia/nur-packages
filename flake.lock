@@ -28,11 +28,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1709027333,
-        "narHash": "sha256-GK3TAT9ipVlISRZ5HK/LIIgqkNC06voSyM45/q0zYdI=",
+        "lastModified": 1709100403,
+        "narHash": "sha256-KXPfbd1tsMYoRc2HIcLUIgqBPpmAeyepkFzo7hy/FhI=",
         "owner": "Cryolitia",
         "repo": "GPD-LinuxControls",
-        "rev": "8fb07ae072552368b1bad2c3e20f6fd58f5082ce",
+        "rev": "ecc16f6980fe43d914494a43c7e5c7fcb4c467f2",
         "type": "github"
       },
       "original": {
@@ -43,11 +43,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1707588924,
-        "narHash": "sha256-0e1ce6X5ghapv6cAF9rxLZKeNyFHHXsLbGxN2cQQE8U=",
+        "lastModified": 1709069307,
+        "narHash": "sha256-ER6N232jucnqu4+AK80RdmgBDuk61FAqmp36EMqkQns=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "10b813040df67c4039086db0f6eaf65c536886c6",
+        "rev": "9c1ea5e3a2a2578792438cba233f2763593e19c5",
         "type": "github"
       },
       "original": {
