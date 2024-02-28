@@ -54,7 +54,8 @@
           inherit system;
           config = { allowUnfree = true; };
         };
-      })) // gpd-linuxcontrols.legacyPackages;
+      } // gpd-linuxcontrols.legacyPackages.${system}
+      ));
 
       packages = forAllSystems (system: nixpkgs.lib.filterAttrs (_: v: nixpkgs.lib.isDerivation v) self.legacyPackages.${system});
 
