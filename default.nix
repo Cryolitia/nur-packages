@@ -31,6 +31,8 @@ rec {
   #   cudaSupport = true;
   # };
 
+  # onnxruntime-cuda-bin = pkgs.callPackage ./pkgs/MaaAssistantArknights/onnxruntime-cuda-bin.nix { };
+
   MaaX = pkgs.callPackage ./pkgs/MaaX { };
 
   maa-cli = pkgs.callPackage ./pkgs/MaaAssistantArknights/maa-cli.nix { };
