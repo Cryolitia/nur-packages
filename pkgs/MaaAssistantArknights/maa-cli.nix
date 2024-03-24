@@ -1,14 +1,16 @@
-{ stdenv
-, lib
-, fetchFromGitHub
+{ lib
+, stdenv
 , rustPlatform
+, fetchFromGitHub
+, makeWrapper
 , pkg-config
 , openssl
-, darwin
+, maa-assistant-arknights
+, android-tools
+, git
 }:
 
 rustPlatform.buildRustPackage rec {
-
   pname = "maa-cli";
   version = "0.4.4";
 
@@ -16,32 +18,44 @@ rustPlatform.buildRustPackage rec {
     owner = "MaaAssistantArknights";
     repo = "maa-cli";
     rev = "v${version}";
-    sha256 = "sha256-pAtv6gCLFKRwUQEF6kD2bCPGpQGzahsfq/tAnQjrZrw=";
+    hash = "sha256-pAtv6gCLFKRwUQEF6kD2bCPGpQGzahsfq/tAnQjrZrw=";
   };
 
   nativeBuildInputs = [
+    makeWrapper
     pkg-config
   ];
 
   buildInputs = [
     openssl
-  ] ++ lib.optional stdenv.isDarwin [
-    darwin.Security
   ];
 
   # https://github.com/MaaAssistantArknights/maa-cli/pull/126
   buildNoDefaultFeatures = true;
-  buildFeatures = [ "git2" ];
+  buildFeatures = [ "git2" "core_installer" ];
 
-  cargoSha256 = "sha256-KjI/5vl7oKVtXYehGLgi9jcaO4Y/TceL498rCPGHMD0=";
+  cargoHash = "sha256-KjI/5vl7oKVtXYehGLgi9jcaO4Y/TceL498rCPGHMD0=";
+
+  # maa-cli would only seach libMaaCore.so and resources in itself's path
+  # https://github.com/MaaAssistantArknights/maa-cli/issues/67
+  postInstall = ''
+    mkdir -p $out/share/maa-assistant-arknights/
+    ln -s ${maa-assistant-arknights}/share/maa-assistant-arknights/* $out/share/maa-assistant-arknights/
+    ln -s ${maa-assistant-arknights}/lib/* $out/share/maa-assistant-arknights/
+    mv $out/bin/maa $out/share/maa-assistant-arknights/
+
+    makeWrapper $out/share/maa-assistant-arknights/maa $out/bin/maa \
+      --prefix PATH : "${lib.makeBinPath [
+        android-tools git
+      ]}"
+  '';
 
   meta = with lib; {
     description = "A simple CLI for MAA by Rust.";
     homepage = "https://github.com/MaaAssistantArknights/maa-cli";
-    license = licenses.agpl3Only;
-    platforms = platforms.linux ++ platforms.darwin;
+    license = licenses.agpl3Plus;
+    platforms = platforms.linux;
     maintainers = with maintainers; [ Cryolitia ];
     mainProgram = "maa";
   };
-
 }

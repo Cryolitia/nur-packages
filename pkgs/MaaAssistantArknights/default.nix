@@ -1,126 +1,77 @@
-# imitate https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=maa-assistant-arknights
-
-{ stdenv
-, pkgs
-, lib
-, config
+{ lib
+, callPackage
+, stdenv
 , fetchFromGitHub
-, cmake
-, opencv
-, zlib
 , asio
+, cmake
+, eigen
 , libcpr
-, python3
-, android-tools
-, makeWrapper
-, range-v3
-, maaVersion ? "5.1.0"
-, maaSourceHash ? "sha256-uScOQEggQ9UGrzwExtclqG5vBzjfb9qDJy80n7e1e80="
-, cudaSupport ? config.cudaSupport
-, git
+, onnxruntime
+, opencv
 }:
 
 let
-  fastdeploy_ppocr = pkgs.callPackage ./fastdeploy_ppocr.nix {
-    inherit cudaSupport;
-  };
-
-  onnxruntime = pkgs.onnxruntime.override {
-    inherit cudaSupport;
-  };
-
-  maa-cli = pkgs.callPackage ./maa-cli.nix { };
-
-  name = "maaassistantarknights";
-
-  maaCore = stdenv.mkDerivation
-    rec {
-
-      pname = "maacore";
-      version = maaVersion;
-
-      src = fetchFromGitHub {
-        owner = "MaaAssistantArknights";
-        repo = "MaaAssistantArknights";
-        rev = "v${version}";
-        sha256 = maaSourceHash;
-      };
-
-      postPatch = ''
-        sed -i 's/RUNTIME\sDESTINATION\s\./ /g; s/LIBRARY\sDESTINATION\s\./ /g; s/PUBLIC_HEADER\sDESTINATION\s\./ /g' CMakeLists.txt
-        sed -i 's/find_package(asio /# find_package(asio /g' CMakeLists.txt
-        sed -i 's/asio::asio/ /g' CMakeLists.txt
-
-        find "src/MaaCore" \
-            \( -name '*.h' -or -name '*.cpp' -or -name '*.hpp' -or -name '*.cc' \) \
-            -exec sed -i 's/onnxruntime\/core\/session\///g' {} \;
-      '';
-
-      nativeBuildInputs = [
-        cmake
-      ];
-
-      buildInputs = [
-        opencv
-        onnxruntime
-        fastdeploy_ppocr
-        zlib
-        asio
-        libcpr
-        python3
-      ] ++ lib.optional stdenv.isDarwin [ range-v3 ];
-
-      cmakeFlags = [
-        "-DCMAKE_BUILD_TYPE=None"
-        "-DUSE_MAADEPS=OFF"
-        "-DINSTALL_THIRD_LIBS=ON"
-        "-DINSTALL_RESOURCE=ON"
-        "-DINSTALL_PYTHON=ON"
-        "-DMAA_VERSION=v${version}"
-      ];
-
-      postInstall = ''
-        mkdir -pv $out/share/${name}
-        mv -v $out/Python $out/share/${name}
-        mv -v $out/resource $out/share/${name}
-      '';
-    };
-
+  fastdeploy = callPackage ./fastdeploy-ppocr.nix { };
 in
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (finalAttr: {
+  pname = "maa-assistant-arknights";
+  version = "5.2.0";
 
-  pname = name;
-  version = maaVersion;
+  src = fetchFromGitHub {
+    owner = "MaaAssistantArknights";
+    repo = "MaaAssistantArknights";
+    rev = "v${finalAttr.version}";
+    hash = "sha256-vxGJHm1StQNN+0IVlGMqKVKW56LH6KUC94utDn7FcNo=";
+  };
+
+  # https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=maa-assistant-arknights
+  postPatch = ''
+    sed -e 's/RUNTIME\sDESTINATION\s\./ /g' \
+        -e 's/LIBRARY\sDESTINATION\s\./ /g' \
+        -e 's/PUBLIC_HEADER\sDESTINATION\s\./ /g' -i CMakeLists.txt
+    sed -e 's/find_package(asio /# find_package(asio /g' \
+        -e 's/asio::asio/ /g' -i CMakeLists.txt
+
+    shopt -s globstar nullglob
+    sed -i 's/onnxruntime\/core\/session\///g' src/MaaCore/**/{*.h,*.cpp,*.hpp,*.cc}
+
+    sed -i 's/ONNXRuntime/onnxruntime/g' CMakeLists.txt
+
+    cp -v ${fastdeploy.cmake}/Findonnxruntime.cmake cmake/
+  '';
 
   nativeBuildInputs = [
-    makeWrapper
+    asio
+    cmake
+    fastdeploy.cmake
   ];
 
-  dontUnpack = true;
+  buildInputs = [
+    fastdeploy
+    libcpr
+    onnxruntime
+    opencv
+  ];
+
+  cmakeFlags = [
+    "-DCMAKE_BUILD_TYPE=None"
+    "-DUSE_MAADEPS=OFF"
+    "-DBUILD_SHARED_LIBS=ON"
+    "-DINSTALL_RESOURCE=ON"
+    "-DINSTALL_PYTHON=ON"
+    "-DMAA_VERSION=v${finalAttr.version}"
+  ];
 
   postInstall = ''
-    mkdir -pv $out/share/${name}
-    ln -sv ${maaCore}/share/${name}/* $out/share/${name}
-    ln -sv ${maaCore}/lib/* $out/share/${name}
-
-    mkdir -pv $out/bin
-    cp -v ${maa-cli}/bin/* $out/share/${name}
-    makeWrapper $out/share/${name}/maa $out/bin/maa'' + lib.optionalString cudaSupport '' \
-      --set LD_LIBRARY_PATH ${onnxruntime}/lib:$LD_LIBRARY_PATH \
-      --prefix PATH ":" ${lib.makeBinPath [
-          android-tools git
-        ]}
-    '' + ''
+    mkdir -p $out/share/${finalAttr.pname}
+    mv $out/{Python,resource} $out/share/${finalAttr.pname}
   '';
 
   meta = with lib; {
     description = "An Arknights assistant";
     homepage = "https://github.com/MaaAssistantArknights/MaaAssistantArknights";
     license = licenses.agpl3Only;
-    platforms = platforms.linux ++ platforms.darwin;
     maintainers = with maintainers; [ Cryolitia ];
-    mainProgram = "maa";
-    broken = true && cudaSupport && stdenv.hostPlatform.system != "x86_64-linux";
+    platforms = platforms.linux;
   };
-
-}
+})

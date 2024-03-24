@@ -1,65 +1,74 @@
-# imitate https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=maa-assistant-arknights
-
 { stdenv
 , config
 , pkgs
 , lib
 , fetchFromGitHub
 , cmake
-, opencv
 , eigen
+, onnxruntime
+, opencv
 , cudaSupport ? config.cudaSupport
 , cudaPackages ? { }
-, symlinkJoin
-}:
+}@inputs:
 
 let
-
-  cuda = import ../common/cuda.nix { inherit cudaPackages; inherit symlinkJoin; };
-
-  onnxruntime = pkgs.onnxruntime.override {
-    inherit cudaSupport;
-  };
-
+  effectiveStdenv = if cudaSupport then cudaPackages.backendStdenv else inputs.stdenv;
+  cudaCapabilities = cudaPackages.cudaFlags.cudaCapabilities;
+  # E.g. [ "80" "86" "90" ]
+  cudaArchitectures = (builtins.map cudaPackages.cudaFlags.dropDot cudaCapabilities);
+  cudaArchitecturesString = lib.strings.concatStringsSep ";" cudaArchitectures;
 in
-cudaPackages.backendStdenv.mkDerivation rec {
-
-  pname = "fastdeploy_ppocr";
+effectiveStdenv.mkDerivation (finalAttrs: {
+  pname = "fastdeploy-ppocr";
   version = "20231009-unstable";
 
   src = fetchFromGitHub {
     owner = "Cryolitia";
     repo = "FastDeploy";
     # follows https://github.com/MaaAssistantArknights/MaaDeps/blob/master/vcpkg-overlay/ports/maa-fastdeploy/portfile.cmake#L4
-    rev = "cb09da245b416cd2b101548b1aa3c3bddf5b12a0";
-    sha256 = "sha256-6WRW8ZqOtnM3Y4xw2PeV9OXuVcfF5+blYNuV6hegCik=";
+    rev = "2e68908141f6950bc5d22ba84f514e893cc238ea";
+    hash = "sha256-BWO4lKZhwNG6mbkC70hPgMNjabTnEV5XMo0bLV/gvQs=";
   };
+
+  outputs = [ "out" "cmake" ];
 
   nativeBuildInputs = [
     cmake
     eigen
-  ] ++ lib.optionals cudaSupport cuda.cuda-native-redist;
+  ] ++ lib.optionals cudaSupport [
+    cudaPackages.cuda_nvcc
+  ];
 
   buildInputs = [
-    opencv
     onnxruntime
-  ] ++ lib.optionals cudaSupport cuda.cuda-common-redist;
+    opencv
+  ] ++ lib.optionals cudaSupport (with cudaPackages; [
+    cuda_cccl # cub/cub.cuh
+    libcublas # cublas_v2.h
+    libcurand # curand.h
+    libcusparse # cusparse.h
+    libcufft # cufft.h
+    cudnn # cudnn.h
+    cuda_cudart
+  ]);
 
   cmakeFlags = [
     "-DCMAKE_BUILD_TYPE=None"
     "-DBUILD_SHARED_LIBS=ON"
-    "-DPRINT_LOG=ON"
   ] ++ lib.optionals cudaSupport [
-    "-DWITH_GPU=ON"
-    "-DCUDA_DIRECTORY=${cuda.cuda-redist}"
+    (lib.cmakeFeature "CMAKE_CUDA_ARCHITECTURES" cudaArchitecturesString)
   ];
 
+  postInstall = ''
+    mkdir $cmake
+    install -Dm644 ${finalAttrs.src}/cmake/Findonnxruntime.cmake $cmake/
+  '';
+
   meta = with lib; {
-    description = "MAAAssistantArknights stripped-down version of FastDeploy";
+    description = "MaaAssistantArknights stripped-down version of FastDeploy";
     homepage = "https://github.com/MaaAssistantArknights/FastDeploy/";
-    platforms = platforms.linux ++ platforms.darwin;
+    platforms = platforms.linux;
     license = licenses.apsl20;
     broken = cudaSupport && stdenv.hostPlatform.system != "x86_64-linux";
   };
-
-}
+})
