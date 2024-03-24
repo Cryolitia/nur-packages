@@ -1,14 +1,14 @@
-{ stdenv
+{ stdenvNoCC
 , pkgs
 , lib
 , fetchurl
 , autoPatchelfHook
-, cudaPackages
 , openmpi
 , nsync
 , abseil-cpp
 , fetchzip
 , symlinkJoin
+, cudaPackages_11
 }:
 
 let
@@ -20,9 +20,7 @@ let
     sha256 = "sha256-KZWIAYrwSznIKOvh1rcYJQQ2Q6a/DuWmt4NxM2ztxkM=";
   };
 
-  cuda = import ../common/cuda.nix { inherit cudaPackages; inherit symlinkJoin; };
-
-in stdenv.mkDerivation rec {
+in stdenvNoCC.mkDerivation rec {
 
   pname = "onnxruntime-cuda-bin";
   version = ver;
@@ -36,11 +34,17 @@ in stdenv.mkDerivation rec {
     autoPatchelfHook
   ];
 
-  buildInputs = [
-    cuda.cuda-native-redist
+  buildInputs = with cudaPackages_11; [
     openmpi
     nsync
     abseil-cpp
+    cuda_cccl # cub/cub.cuh
+    libcublas # cublas_v2.h
+    libcurand # curand.h
+    libcusparse # cusparse.h
+    libcufft # cufft.h
+    cudnn # cudnn.h
+    cuda_cudart
   ];
 
   dontStrip = true;
@@ -59,6 +63,7 @@ in stdenv.mkDerivation rec {
 
   meta = pkgs.onnxruntime.meta // (with lib; {
     platforms = [ "x86_64-linux" ];
+    broken = stdenvNoCC.hostPlatform.system != "x86_64-linux";
   });
 
 }
