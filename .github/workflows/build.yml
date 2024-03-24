@@ -17,6 +17,7 @@ jobs:
       matrix:
         arch:
           - x86_64
+          # error: Package ‘jasper-4.2.2’ in /nix/store/v11jg47gprsyk91hyynwsam4jga3pavh-source/pkgs/by-name/ja/jasper/package.nix:60 is marked as broken, refusing to evaluate.
           # - aarch64
         nixPath:
           - nixpkgs=channel:nixos-unstable
@@ -64,7 +65,6 @@ jobs:
         name: cryolitia
         extraPullNames: nix-community, cuda-maintainers
     - name: Setup Github Caches
-      if: ${{ matrix.arch == 'aarch64' }}
       uses: DeterminateSystems/magic-nix-cache-action@v4
     - name: Check evaluation
       run: |
