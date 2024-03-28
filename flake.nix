@@ -36,7 +36,7 @@
       };
     };
   };
-  outputs = { self, nixpkgs, gpd-linuxcontrols, ... }:
+  outputs = { self, nixpkgs, gpd-linuxcontrols, rust-overlay, ... }:
     let
       systems = [
         "x86_64-linux"
@@ -64,10 +64,14 @@
         pkgs = import nixpkgs {
           inherit system;
           config = { allowUnfree = true; };
+          overlays = [
+            (import rust-overlay)
+          ];
         };
       }; import ./default.nix
         {
           inherit pkgs;
+          rust-overlay = true;
         } // (if (system == "x86_64-linux") then gpd-linuxcontrols.legacyPackages.${system} else { }) // (
         if (builtins.elem system systems-linux) then
           import ./linux-specific.nix
@@ -89,7 +93,11 @@
             cudaCapabilities = [ "8.6" ];
             cudaEnableForwardCompat = false;
           };
+          overlays = [
+            (import rust-overlay)
+          ];
         };
+        rust-overlay  = true;
       });
 
       nixosModules = import ./modules;

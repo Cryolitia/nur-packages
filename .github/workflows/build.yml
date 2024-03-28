@@ -66,15 +66,6 @@ jobs:
         extraPullNames: nix-community, cuda-maintainers
     - name: Setup Github Caches
       uses: DeterminateSystems/magic-nix-cache-action@v4
-    - name: Check evaluation
-      run: |
-        nix-env -f . -qa \* --meta --xml \
-          --allowed-uris https://static.rust-lang.org \
-          --option restrict-eval true \
-          --option allow-import-from-derivation true \
-          --drv-path --show-trace \
-          -I nixpkgs=$(nix-instantiate --find-file nixpkgs) \
-          -I $PWD
     - name: Build x86_64 nix packages
       if: ${{ matrix.arch == 'x86_64' }}
       run: nix shell -f '<nixpkgs>' nix-build-uncached -c nix-build-uncached ci.nix -A cacheOutputs

@@ -12,6 +12,10 @@ version_beta="$(curl "https://api.github.com/repos/MaaAssistantArknights/MaaAssi
 
 hash_beta=$(nix-prefetch-github MaaAssistantArknights MaaAssistantArknights --rev ${version_beta} -v | jq -r .hash)
 
+version_cli="$(curl "https://api.github.com/repos/MaaAssistantArknights/maa-cli/releases?per_page=1" | jq -r '.[0].tag_name')"
+
+hash_cli=$(nix-prefetch-github MaaAssistantArknights maa-cli --rev ${version_cli} -v | jq -r .hash)
+
 cat > $directory/pin.json << EOF
 {
   "stable": {
@@ -21,6 +25,10 @@ cat > $directory/pin.json << EOF
   "beta": {
     "version": "${version_beta#*v}",
     "hash": "$hash_beta"
+  },
+  "maa-cli": {
+    "version": "${version_cli#*v}",
+    "hash": "$hash_cli"
   }
 }
 EOF
