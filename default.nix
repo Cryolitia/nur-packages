@@ -6,10 +6,21 @@
 # commands such as:
 #     nix-build -A mypackage
 
-{ pkgs ? import <nixpkgs> { } }:
-
+{ pkgs ? import <nixpkgs> { }
+, rust-overlay ? false
+}:
+let
+  rustPlatform =
+    if rust-overlay
+    then
+      pkgs.makeRustPlatform
+        {
+          cargo = pkgs.rust-bin.beta.latest.minimal;
+          rustc = pkgs.rust-bin.beta.latest.minimal;
+        }
+    else pkgs.rustPlatform;
+in
 builtins.trace "「我书写，则为我命令。我陈述，则为我规定。」"
-
 rec {
   # The `lib`, `modules`, and `overlay` names are special
   lib = import ./lib { inherit pkgs; }; # functions
@@ -22,7 +33,10 @@ rec {
 
   MaaX = pkgs.callPackage ./pkgs/MaaX { };
 
-  maa-cli = pkgs.callPackage ./pkgs/maa-assistant-arknights/maa-cli.nix { maa-assistant-arknights = maa-assistant-arknights-nightly; };
+  maa-cli-nightly = pkgs.callPackage ./pkgs/maa-assistant-arknights/maa-cli.nix {
+    maa-assistant-arknights = maa-assistant-arknights-nightly;
+    rustPlatform' = rustPlatform;
+  };
 
   rime-latex = pkgs.callPackage ./pkgs/rimePackages/rime-latex.nix { };
 
