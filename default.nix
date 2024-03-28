@@ -16,15 +16,13 @@ rec {
   modules = import ./modules; # NixOS modules
   overlays = import ./overlays; # nixpkgs overlays
 
-  maa-assistant-arknights = pkgs.callPackage ./pkgs/maa-assistant-arknights { };
-
-  maa-assistant-arknights-beta = maa-assistant-arknights.override { isBeta = true; };
+  maa-assistant-arknights-nightly = pkgs.callPackage ./pkgs/maa-assistant-arknights { };
 
   onnxruntime-cuda-bin = pkgs.callPackage ./pkgs/maa-assistant-arknights/onnxruntime-cuda-bin.nix { };
 
   MaaX = pkgs.callPackage ./pkgs/MaaX { };
 
-  maa-cli = pkgs.callPackage ./pkgs/maa-assistant-arknights/maa-cli.nix { inherit maa-assistant-arknights; };
+  maa-cli = pkgs.callPackage ./pkgs/maa-assistant-arknights/maa-cli.nix { maa-assistant-arknights = maa-assistant-arknights-nightly; };
 
   rime-latex = pkgs.callPackage ./pkgs/rimePackages/rime-latex.nix { };
 
