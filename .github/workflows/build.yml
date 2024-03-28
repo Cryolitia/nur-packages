@@ -6,11 +6,19 @@ on:
     branches:
       - main
       - master
+    paths:
+      - '**.nix'
+      - '**.sh'
+      - '.github/workflows/build.yml'
+      - '**.patch'
+      - '**.json'
+      - '**.lock'
   schedule:
     # rebuild everyday at 2:51
     # TIP: Choose a random time here so not all repositories are build at once:
     # https://www.random.org/clock-times/?num=1&earliest=01%3A00&latest=08%3A00&interval=5&format=html&rnd=new
     - cron:  '51 2 * * *'
+
 jobs:
   tests:
     strategy:
@@ -39,8 +47,10 @@ jobs:
         large-packages: true
         docker-images: true
         swap-storage: true
+
     - name: Checkout repository
       uses: actions/checkout@v4
+
     - name: Install nix
       uses: cachix/install-nix-action@v26
       with:
@@ -48,8 +58,10 @@ jobs:
         extra_nix_config: |
           experimental-features = nix-command flakes
           access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
     - name: Show nixpkgs version
       run: nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
+
     - name: Setup cachix (x86_64)
       if: ${{ matrix.arch == 'x86_64' }}
       uses: cachix/cachix-action@v14
@@ -58,19 +70,24 @@ jobs:
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
         extraPullNames: nix-community, cuda-maintainers
+
     - name: Setup cachix (aarch64)
       if: ${{ matrix.arch == 'aarch64' }}
       uses: cachix/cachix-action@v14
       with:
         name: cryolitia
         extraPullNames: nix-community, cuda-maintainers
+
     - name: Setup Github Caches
       uses: DeterminateSystems/magic-nix-cache-action@v4
+
     - name: Build x86_64 nix packages
       if: ${{ matrix.arch == 'x86_64' }}
       run: nix shell -f '<nixpkgs>' nix-build-uncached -c nix-build-uncached ci.nix -A cacheOutputs
+
     - name: Build aarch64 nix packages
       if: ${{ matrix.arch == 'aarch64' }}
       run: nix shell -f '<nixpkgs>' nix-build-uncached -c nix-build-uncached ci_aarch64.nix -A cacheOutputs
+
     - name: Trigger NUR update
       run: curl -XPOST "https://nur-update.nix-community.org/update?repo=Cryolitia"

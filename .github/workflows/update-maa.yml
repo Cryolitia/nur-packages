@@ -1,4 +1,4 @@
-name: "Update"
+name: "Update Maa"
 on:
   workflow_dispatch:
   push:
