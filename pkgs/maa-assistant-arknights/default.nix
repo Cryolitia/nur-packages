@@ -7,7 +7,7 @@ let
   sources = lib.importJSON ./pin.json;
 in
 (maa-assistant-arknights.overrideAttrs (oldAttrs: {
-  pname  = "maa-assistant-arknights-nightly";
+  pname  = "maa-assistant-arknights";
   src = fetchFromGitHub {
     owner = "MaaAssistantArknights";
     repo = "MaaAssistantArknights";
