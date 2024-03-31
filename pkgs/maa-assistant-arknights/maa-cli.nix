@@ -9,13 +9,13 @@ let
   sources = lib.importJSON ./pin.json;
 in
 rustPlatform'.buildRustPackage rec {
-  pname = "maa-cli-nightly";
-  version = sources.maa-cli.version;
+  pname = "maa-cli";
+  version = sources.maa-cli.name;
 
   src = fetchFromGitHub {
     owner = "MaaAssistantArknights";
     repo = "maa-cli";
-    rev = "v${sources.maa-cli.version}";
+    rev = "${sources.maa-cli.version}";
     hash = sources.maa-cli.hash;
   };
 
