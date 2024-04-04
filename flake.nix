@@ -103,6 +103,7 @@
         
         aarch64 = nixpkgs.lib.filterAttrs (_: v: nixpkgs.lib.isDerivation v) (import ./default.nix {
           pkgs = import nixpkgs {
+            system = "x86_64-linux";
             crossSystem = {
               config = "aarch64-unknown-linux-gnu";
             };
