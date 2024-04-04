@@ -83,22 +83,39 @@
 
       packages = forAllSystems (system: nixpkgs.lib.filterAttrs (_: v: nixpkgs.lib.isDerivation v) self.legacyPackages.${system});
 
-      hydraJobs = nixpkgs.lib.filterAttrs (_: v: nixpkgs.lib.isDerivation v) (import ./default.nix {
-        pkgs = import nixpkgs {
-          system = "x86_64-linux";
-          config = {
-            allowUnfree = true;
-            cudaSupport = true;
-            # https://github.com/SomeoneSerge/nixpkgs-cuda-ci/blob/develop/nix/ci/cuda-updates.nix#L18
-            cudaCapabilities = [ "8.6" ];
-            cudaEnableForwardCompat = false;
+      hydraJobs = {
+        cuda = nixpkgs.lib.filterAttrs (_: v: nixpkgs.lib.isDerivation v) (import ./default.nix {
+          pkgs = import nixpkgs {
+            system = "x86_64-linux";
+            config = {
+              allowUnfree = true;
+              cudaSupport = true;
+              # https://github.com/SomeoneSerge/nixpkgs-cuda-ci/blob/develop/nix/ci/cuda-updates.nix#L18
+              cudaCapabilities = [ "8.6" ];
+              cudaEnableForwardCompat = false;
+            };
+            overlays = [
+              (import rust-overlay)
+            ];
           };
-          overlays = [
-            (import rust-overlay)
-          ];
-        };
-        rust-overlay  = true;
-      });
+          rust-overlay = true;
+        });
+        
+        aarch64 = nixpkgs.lib.filterAttrs (_: v: nixpkgs.lib.isDerivation v) (import ./default.nix {
+          pkgs = import nixpkgs {
+            crossSystem = {
+              config = "aarch64-unknown-linux-gnu";
+            };
+            config = {
+              allowUnfree = true;
+            };
+            overlays = [
+              (import rust-overlay)
+            ];
+          };
+          rust-overlay = true;
+        });
+      };
 
       nixosModules = import ./modules;
     };
