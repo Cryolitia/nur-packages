@@ -31,7 +31,7 @@ rec {
 
   onnxruntime-cuda-bin = pkgs.callPackage ./pkgs/maa-assistant-arknights/onnxruntime-cuda-bin.nix { };
 
-  MaaX = pkgs.callPackage ./pkgs/MaaX { };
+  maa-x = pkgs.callPackage ./pkgs/maa-assistant-arknights/maa-x.nix { };
 
   maa-cli-nightly = pkgs.callPackage ./pkgs/maa-assistant-arknights/maa-cli.nix {
     maa-assistant-arknights = maa-assistant-arknights-nightly;
@@ -43,4 +43,8 @@ rec {
   rime-project-trans = pkgs.callPackage ./pkgs/rimePackages/rime-project-trans.nix { };
 
   telegram-desktop-fix-webview = pkgs.qt6Packages.callPackage ./pkgs/common/telegram-desktop.nix { };
+
+  mdbook-typst-pdf = pkgs.callPackage ./pkgs/common/mdbook-typst-pdf.nix {
+    rustPlatform' = rustPlatform;
+  };
 }
