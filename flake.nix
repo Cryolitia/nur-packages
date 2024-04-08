@@ -59,7 +59,7 @@
 
       forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
     in
-    {
+    rec {
       legacyPackages = (forAllSystems (system: (with {
         pkgs = import nixpkgs {
           inherit system;
@@ -74,7 +74,7 @@
           rust-overlay = true;
         } // (if (system == "x86_64-linux") then gpd-linuxcontrols.legacyPackages.${system} else { }) // (
         if (builtins.elem system systems-linux) then
-          import ./linux-specific.nix
+          import ./nix/linux-specific.nix
             {
               inherit pkgs;
             } else { }
@@ -83,8 +83,16 @@
 
       packages = forAllSystems (system: nixpkgs.lib.filterAttrs (_: v: nixpkgs.lib.isDerivation v) self.legacyPackages.${system});
 
-      hydraJobs = {
-        cuda = nixpkgs.lib.filterAttrs (_: v: nixpkgs.lib.isDerivation v) (import ./default.nix {
+      packages-summary = builtins.mapAttrs (name: value: value.meta) packages.x86_64-linux;
+
+      lib = import ./lib { pkgs = nixpkgs; };
+
+      nixosModules = import ./modules;
+
+      ciJobs = {
+        default = lib.filterNurAttrs "x86_64-linux" packages.x86_64-linux;
+
+        cuda = lib.filterNurAttrs "x86_64-linux" (import ./default.nix {
           pkgs = import nixpkgs {
             system = "x86_64-linux";
             config = {
@@ -101,7 +109,7 @@
           rust-overlay = true;
         });
         
-        aarch64 = nixpkgs.lib.filterAttrs (_: v: nixpkgs.lib.isDerivation v) (import ./default.nix {
+        aarch64 = lib.filterNurAttrs "aarch64-linux" (import ./default.nix {
           pkgs = import nixpkgs {
             system = "x86_64-linux";
             crossSystem = {
@@ -118,6 +126,9 @@
         });
       };
 
-      nixosModules = import ./modules;
+      hydraJobs = {
+        cuda = ciJobs.cuda;
+        # aarch64 = ciJobs.aarch64;
+      };
     };
 }
