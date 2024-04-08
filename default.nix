@@ -25,7 +25,6 @@ rec {
   # The `lib`, `modules`, and `overlay` names are special
   lib = import ./lib { inherit pkgs; }; # functions
   modules = import ./modules; # NixOS modules
-  overlays = import ./overlays; # nixpkgs overlays
 
   maa-assistant-arknights-nightly = pkgs.callPackage ./pkgs/maa-assistant-arknights { };
 

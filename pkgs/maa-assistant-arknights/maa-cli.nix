@@ -27,7 +27,7 @@ rustPlatform'.buildRustPackage rec {
   buildFeatures = maa-cli.buildFeatures;
 
   cargoLock = {
-    lockFile = "${src}/Cargo.lock";
+    lockFile = "${src.out}/Cargo.lock";
   };
 
   postInstall = maa-cli.postInstall + ''
