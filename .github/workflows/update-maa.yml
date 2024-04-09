@@ -22,19 +22,9 @@ jobs:
     outputs:
       result: ${{ steps.gitUpdate.outputs.result }}
     steps:
-      - name: Install nix
-        uses: cachix/install-nix-action@v26
-        with:
-          nix_path: nixpkgs=channel:nixpkgs-unstable
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
-
-      - name: Setup Github Caches
-        uses: DeterminateSystems/magic-nix-cache-action@v4
-
-      - name: Show nixpkgs version
-        run: nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - uses: DeterminateSystems/flake-checker-action@main
 
       - name: Checkout
         uses: actions/checkout@v4
