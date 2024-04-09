@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - ".github/workflows/update.yml"
+      - ".github/workflows/update-maa.yml"
       - "pkgs/maa-assistant-arknights/update.sh"
   schedule:
     # rebuild everyday at 2:51
@@ -17,9 +17,10 @@ permissions:
   contents: write
 
 jobs:
-  sync-reource:
+  sync:
     runs-on: ubuntu-latest
-
+    outputs:
+      result: ${{ steps.gitUpdate.outputs.result }}
     steps:
       - name: Install nix
         uses: cachix/install-nix-action@v26
@@ -47,10 +48,22 @@ jobs:
           git show -s
 
       - name: Update MaaAssistantArknights
+        continue-on-error: true
+        id: gitUpdate
         run: |
           cd pkgs/maa-assistant-arknights
           ./update.sh
+
+          set +e
+
           git add .
           git status
-          git commit -m "MaaAssistantArknights update: $(date +'%Y-%m-%dT%H:%M:%S')" || exit 0
+          git commit -m "MaaAssistantArknights update: $(date +'%Y-%m-%dT%H:%M:%S')"
+          echo "result=$?" >> "$GITHUB_OUTPUT"
           git push
+
+  build:
+    needs: [ sync ]
+    if: needs.sync.outputs.result == '0'
+    uses: ./.github/workflows/build.yml
+
