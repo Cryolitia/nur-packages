@@ -72,7 +72,9 @@
         {
           inherit pkgs;
           rust-overlay = true;
-        } // (if (system == "x86_64-linux") then gpd-linuxcontrols.legacyPackages.${system} else { }) // (
+        } // {
+        gpd-linux-controls = gpd-linuxcontrols.packages.${system}.default;
+      } // (
         if (builtins.elem system systems-linux) then
           import ./nix/linux-specific.nix
             {
@@ -108,7 +110,7 @@
           };
           rust-overlay = true;
         });
-        
+
         aarch64 = lib.filterNurAttrs "aarch64-linux" (import ./default.nix {
           pkgs = import nixpkgs {
             system = "x86_64-linux";
