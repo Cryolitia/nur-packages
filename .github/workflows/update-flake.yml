@@ -6,14 +6,21 @@ on:
     # TIP: Choose a random time here so not all repositories are build at once:
     # https://www.random.org/clock-times/?num=1&earliest=01%3A00&latest=08%3A00&interval=5&format=html&rnd=new
     - cron:  '31 2 * * 5'
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - '.github/workflows/update-flake.yml'
 
 permissions:
   contents: write
 
 jobs:
-  sync-flake:
+  sync:
     runs-on: ubuntu-latest
-
+    outputs:
+      result: ${{ steps.gitUpdate.outputs.result }}
     steps:
       - name: Install nix
         uses: cachix/install-nix-action@v26
@@ -40,8 +47,18 @@ jobs:
           nix flake info --accept-flake-config
 
       - name: Update flake
+        continue-on-error: true
+        id: gitUpdate
         run: |
+          set +e
+
           git add .
           git status
-          git commit -m "flake update: $(date +'%Y-%m-%dT%H:%M:%S')" || exit 0
+          git commit -m "flake update: $(date +'%Y-%m-%dT%H:%M:%S')"
+          echo "result=$?" >> "$GITHUB_OUTPUT"
           git push
+
+  build:
+    needs: [ sync ]
+    if: needs.sync.outputs.result == '0'
+    uses: ./.github/workflows/build.yml
