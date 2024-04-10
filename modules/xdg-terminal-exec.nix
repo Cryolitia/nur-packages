@@ -26,12 +26,12 @@ with lib;
       };
 
       config = mkOption {
-        type = with lib.types; attrsOf (listOf string);
+        type = with lib.types; attrsOf (listOf str);
         default = { };
         description = mdDoc ''
           Configuration options for XDG terminal execution utility.
 
-          The keys are the desktop environments, and the values are the list of [teminals'desktop file ID](https://specifications.freedesktop.org/desktop-entry-spec/latest/ar01s02.html#desktop-file-id) to try.
+          The keys are the desktop environments, and the values are the list of teminals' [desktop file ID](https://specifications.freedesktop.org/desktop-entry-spec/latest/ar01s02.html#desktop-file-id) to try.
 
           To define your current desktop environment, run `echo $XDG_CURRENT_DESKTOP`.
 
