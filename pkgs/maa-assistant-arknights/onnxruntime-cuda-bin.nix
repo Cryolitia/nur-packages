@@ -62,6 +62,7 @@ in stdenvNoCC.mkDerivation rec {
   '';
 
   meta = pkgs.onnxruntime.meta // (with lib; {
+    broken = true;
     platforms = [ "x86_64-linux" ];
   });
 

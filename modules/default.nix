@@ -4,4 +4,6 @@
   # my-module = ./my-module;
 
   ryzen-smu = ./ryzen-smu.nix;
+
+  xdg-terminal-exec = ./xdg-terminal-exec.nix;
 }
