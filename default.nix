@@ -46,4 +46,6 @@ rec {
   mdbook-typst-pdf = pkgs.callPackage ./pkgs/common/mdbook-typst-pdf.nix {
     rustPlatform' = rustPlatform;
   };
+
+  shanggu-fonts = pkgs.callPackage ./pkgs/common/shanggu-fonts.nix { };
 }
