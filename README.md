@@ -28,8 +28,6 @@ Patches from: https://gitlab.archlinux.org/archlinux/packaging/packages/telegram
 
 - [BMI260](https://github.com/hhd-dev/bmi260) \
   A Bosch BMI260 driver
-- [ryzen_smu](https://github.com/Cryolitia/ryzen_smu) \
-  Self maintained ryzen_smu kernel module
 - [onnxruntime-cuda-bin](https://github.com/microsoft/onnxruntime)
 - [rime-latex](https://github.com/shenlebantongying/rime_latex)
 - [rime-project-trans](https://github.com/project-trans/rime-dict)
