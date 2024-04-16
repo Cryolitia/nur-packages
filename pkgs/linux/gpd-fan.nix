@@ -12,8 +12,8 @@ stdenv.mkDerivation (finalAttr: {
   src = fetchFromGitHub {
     owner = "Cryolitia";
     repo = finalAttr.pname;
-    rev = "425e370eb17a6410daea2ad0f5f6037ef1440137";
-    hash = "sha256-NTb5cU0TpLJqX7P3rraaiD80H7NcCZqIIrT1mhFJ4/U=";
+    rev = "21f18bde711ede0491abf42f31a7a064aa5df037";
+    hash = "sha256-FCUfT04Dft4clPBInQZ7DqaM77QQH8Nf1NydqV5zx5o=";
   };
 
   hardeningDisable = [ "pic" ];
