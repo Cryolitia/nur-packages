@@ -29,6 +29,6 @@ rustPlatform'.buildRustPackage rec {
     homepage = "https://github.com/KaiserY/mdbook-typst-pdf";
     license = licenses.asl20;
     maintainers = with maintainers; [ Cryolitia ];
-    #mainProgram = "maa";
+    broken = stdenv.buildPlatform != stdenv.hostPlatform;
   };
 }
