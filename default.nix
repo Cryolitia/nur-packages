@@ -48,4 +48,6 @@ rec {
   };
 
   shanggu-fonts = pkgs.callPackage ./pkgs/common/shanggu-fonts.nix { };
+
+  vscode-vtuber = pkgs.callPackage ./pkgs/common/vscode-vtuber.nix { };
 }
