@@ -16,5 +16,7 @@ in
     sha256 = sources.beta.hash;
   };
   # https://github.com/NixOS/nixpkgs/issues/306042
-  broken = stdenv.buildPlatform != stdenv.hostPlatform;
+  meta = oldAttrs // {
+    broken = stdenv.buildPlatform != stdenv.hostPlatform;
+  };
 }))
