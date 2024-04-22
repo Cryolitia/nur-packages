@@ -3,7 +3,7 @@
 , maa-cli
 , fetchFromGitHub
 , maa-assistant-arknights
-, installShellFiles
+, stdenv
 }:
 let
   sources = lib.importJSON ./pin.json;
@@ -30,11 +30,9 @@ rustPlatform'.buildRustPackage rec {
     lockFile = "${src.out}/Cargo.lock";
   };
 
-  postInstall = maa-cli.postInstall + ''
-    mkdir -p manpage
-    $out/bin/maa mangen --path manpage
-    installManPage manpage/*
-  '';
+  postInstall = maa-cli.postInstall;
 
-  meta = maa-cli.meta;
+  meta = maa-cli.meta // {
+    broken = stdenv.buildPlatform != stdenv.hostPlatform;
+  };
 }
