@@ -94,7 +94,7 @@
 
       lib = import ./lib { pkgs = nixpkgs; };
 
-      nixosModules = import ./modules;
+      nixosModules = import ./modules { inherit gpd-fan-driver; };
 
       ciJobs = {
         default = lib.filterNurAttrs "x86_64-linux" packages.x86_64-linux;
