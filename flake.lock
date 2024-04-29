@@ -18,6 +18,26 @@
         "type": "github"
       }
     },
+    "gpd-fan-driver": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1714396691,
+        "narHash": "sha256-EiWXBWssiVZk4kSrS0A40SX9YXwmyehoaVQhES0sDNM=",
+        "owner": "Cryolitia",
+        "repo": "gpd-fan-driver",
+        "rev": "353d277f3360ad2f51ffa3165c0bbbfd81d13cf5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Cryolitia",
+        "repo": "gpd-fan-driver",
+        "type": "github"
+      }
+    },
     "gpd-linuxcontrols": {
       "inputs": {
         "nixpkgs": [
@@ -59,6 +79,7 @@
     },
     "root": {
       "inputs": {
+        "gpd-fan-driver": "gpd-fan-driver",
         "gpd-linuxcontrols": "gpd-linuxcontrols",
         "nixpkgs": "nixpkgs",
         "rust-overlay": "rust-overlay"
