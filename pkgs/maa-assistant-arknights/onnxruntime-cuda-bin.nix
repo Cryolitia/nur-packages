@@ -7,7 +7,6 @@
 , nsync
 , abseil-cpp
 , fetchzip
-, symlinkJoin
 , cudaPackages_11
 }:
 

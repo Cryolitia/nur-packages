@@ -1,9 +1,8 @@
-{ lib
-, vscode
+{ vscode
 , logo-url ? "https://raw.githubusercontent.com/Aikoyori/ProgrammingVTuberLogos/main/VSCode/VSCode.png"
 }:
 
-vscode.overrideAttrs (oldAttrs: rec {
+vscode.overrideAttrs (oldAttrs: {
   postPatch = ''
     echo ".editor-group-watermark > .letterpress{
       background-image: url(${logo-url}) !important;

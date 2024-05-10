@@ -33,7 +33,9 @@ rec {
   maa-x = pkgs.callPackage ./pkgs/maa-assistant-arknights/maa-x.nix { };
 
   maa-cli-nightly = pkgs.callPackage ./pkgs/maa-assistant-arknights/maa-cli.nix {
-    maa-assistant-arknights = maa-assistant-arknights-nightly;
+    maa-cli' = pkgs.maa-cli.override {
+      maa-assistant-arknights = maa-assistant-arknights-nightly;
+    };
     rustPlatform' = rustPlatform;
   };
 

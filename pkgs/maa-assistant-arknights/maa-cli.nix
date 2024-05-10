@@ -1,14 +1,14 @@
 { lib
 , rustPlatform'
-, maa-cli
+, maa-cli'
 , fetchFromGitHub
-, maa-assistant-arknights
 , stdenv
+, fetchurl
 }:
 let
   sources = lib.importJSON ./pin.json;
 in
-rustPlatform'.buildRustPackage rec {
+rustPlatform'.buildRustPackage {
   pname = "maa-cli";
   version = sources.maa-cli.name;
 
@@ -19,20 +19,22 @@ rustPlatform'.buildRustPackage rec {
     hash = sources.maa-cli.hash;
   };
 
-  nativeBuildInputs = maa-cli.nativeBuildInputs;
+  nativeBuildInputs = maa-cli'.nativeBuildInputs;
 
-  buildInputs = maa-cli.buildInputs;
+  buildInputs = maa-cli'.buildInputs;
 
-  buildNoDefaultFeatures = maa-cli.buildNoDefaultFeatures;
-  buildFeatures = maa-cli.buildFeatures;
+  buildNoDefaultFeatures = maa-cli'.buildNoDefaultFeatures;
+  buildFeatures = maa-cli'.buildFeatures;
 
   cargoLock = {
-    lockFile = "${src.out}/Cargo.lock";
+    lockFile = ./Cargo.lock;
   };
 
-  postInstall = maa-cli.postInstall;
+  postInstall = maa-cli'.postInstall;
 
-  meta = maa-cli.meta // {
+  passthru.updateScript = ./update.sh;
+
+  meta = maa-cli'.meta // {
     broken = stdenv.buildPlatform != stdenv.hostPlatform;
   };
 }
