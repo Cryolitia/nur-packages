@@ -1,12 +1,13 @@
-name: "Update Maa"
+name: "Update Package"
 on:
   workflow_dispatch:
   push:
     branches:
       - master
     paths:
-      - ".github/workflows/update-maa.yml"
+      - ".github/workflows/update-package.yml"
       - "pkgs/maa-assistant-arknights/update.sh"
+      - "pkgs/mdbook-typst-pdf/update.sh"
   schedule:
     # rebuild everyday at 2:51
     # TIP: Choose a random time here so not all repositories are build at once:
@@ -19,8 +20,6 @@ permissions:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    outputs:
-      result: ${{ steps.gitUpdate.outputs.result }}
     steps:
       - uses: DeterminateSystems/nix-installer-action@main
       - uses: DeterminateSystems/magic-nix-cache-action@main
@@ -30,6 +29,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           show-progress: false
+          token:  ${{ secrets.PAT }}
 
       - name: Setup Git
         run: |
@@ -37,9 +37,8 @@ jobs:
           git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com"
           git show -s
 
-      - name: Update MaaAssistantArknights
+      - name: Update maa-assistant-arknights
         continue-on-error: true
-        id: gitUpdate
         run: |
           cd pkgs/maa-assistant-arknights
           ./update.sh
@@ -48,12 +47,19 @@ jobs:
 
           git add .
           git status
-          git commit -m "MaaAssistantArknights update: $(date +'%Y-%m-%dT%H:%M:%S')"
-          echo "result=$?" >> "$GITHUB_OUTPUT"
+          git commit -m "maa-assistant-arknights: update at $(date +'%Y-%m-%dT%H:%M:%S')"
           git push
+      
+      - name: Update mdbok-typst-pdf
+        continue-on-error: true
+        run: |
+          cd pkgs/mdbok-typst-pdf
+          ./update.sh
 
-  build:
-    needs: [ sync ]
-    if: needs.sync.outputs.result == '0'
-    uses: ./.github/workflows/build.yml
+          set +e
+
+          git add .
+          git status
+          git commit -m "mdbook-typst-pdf: update at $(date +'%Y-%m-%dT%H:%M:%S')"
+          git push
 
