@@ -3,26 +3,23 @@
 , fetchFromGitHub
 , stdenv
 }:
-
-rustPlatform'.buildRustPackage rec {
+let
+  source = lib.importJSON ./pin.json;
+in
+rustPlatform'.buildRustPackage {
   pname = "mdbook-typst-pdf";
-  version = "0.4.0";
+  version = source.version;
 
   src = fetchFromGitHub {
     owner = "KaiserY";
     repo = "mdbook-typst-pdf";
-    rev = "v${version}";
-    hash = "sha256-fQTRnl7Z+HZuJ2CrofxmVTrz6Hyf8NpUJ2SWlow+zmY=";
-  };
-
-  cargoHash = "";
-
-  cargoLock.outputHashes = {
-    "typst-0.11.0" = "sha256-RbkirnVrhYT/OuZSdJWMOvQXAeBmsFICsCrezyT6ukA=";
+    rev = "v${source.version}";
+    hash = source.hash;
   };
 
   cargoLock = {
-    lockFile = "${src.out}/Cargo.lock";
+    lockFile = ./Cargo.lock;
+    allowBuiltinFetchGit = true;
   };
 
   meta = with lib; {
