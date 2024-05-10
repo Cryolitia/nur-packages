@@ -45,11 +45,9 @@ rec {
 
   telegram-desktop-fix-webview = pkgs.qt6Packages.callPackage ./pkgs/common/telegram-desktop.nix { };
 
-  mdbook-typst-pdf = pkgs.callPackage ./pkgs/common/mdbook-typst-pdf.nix {
+  mdbook-typst-pdf = pkgs.callPackage ./pkgs/mdbook-typst-pdf/default.nix {
     rustPlatform' = rustPlatform;
   };
-
-  shanggu-fonts = pkgs.callPackage ./pkgs/common/shanggu-fonts.nix { };
 
   vscode-vtuber = pkgs.callPackage ./pkgs/common/vscode-vtuber.nix { };
 }
