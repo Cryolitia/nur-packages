@@ -19,7 +19,9 @@ rustPlatform'.buildRustPackage {
 
   cargoLock = {
     lockFile = ./Cargo.lock;
-    allowBuiltinFetchGit = true;
+    outputHashes = {
+      "typst-0.11.0" = "sha256-RbkirnVrhYT/OuZSdJWMOvQXAeBmsFICsCrezyT6ukA=";
+    };
   };
 
   meta = with lib; {
