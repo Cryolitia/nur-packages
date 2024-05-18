@@ -50,4 +50,6 @@ rec {
   };
 
   vscode-vtuber = pkgs.callPackage ./pkgs/common/vscode-vtuber.nix { };
+
+  mutter-text-input-v1 = pkgs.callPackage ./pkgs/common/mutter.nix { };
 }
