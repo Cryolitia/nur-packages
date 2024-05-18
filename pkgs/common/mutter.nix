@@ -1,5 +1,6 @@
 { gnome
 , fetchpatch
+, stdenv
 }:
 
 gnome.mutter.overrideAttrs (oldAttrs: {
@@ -12,6 +13,7 @@ gnome.mutter.overrideAttrs (oldAttrs: {
   ];
   meta = oldAttrs.meta // {
     description = "GNOME mutter with https://gitlab.gnome.org/GNOME/mutter/-/merge_requests/3751";
+    broken = stdenv.buildPlatform != stdenv.hostPlatform;
   };
 })
  
