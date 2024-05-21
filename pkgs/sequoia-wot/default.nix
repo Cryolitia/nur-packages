@@ -7,6 +7,7 @@
   nettle,
   openssl,
   sqlite,
+  stdenv,
 }:
 rustPlatform'.buildRustPackage rec {
   pname = "sequoia-wot";
@@ -49,5 +50,7 @@ rustPlatform'.buildRustPackage rec {
     homepage = "https://gitlab.com/sequoia-pgp/sequoia-wot";
     license = licenses.gpl2Only;
     maintainers = with maintainers; [ Cryolitia ];
+    mainProgram = "sq-wot";
+    broken = stdenv.buildPlatform != stdenv.hostPlatform;
   };
 }
