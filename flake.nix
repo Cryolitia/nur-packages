@@ -92,9 +92,12 @@
               inherit pkgs;
               rust-overlay = true;
             }
-            // {
-              gpd-linux-controls = gpd-linuxcontrols.packages.${system}.default;
-            }
+            // (
+              if system == "x86_64-linux" then
+                { gpd-linux-controls = gpd-linuxcontrols.packages.${system}.default; }
+              else
+                { }
+            )
             // (
               if (builtins.elem system systems-linux) then
                 import ./nix/linux-specific.nix { inherit pkgs gpd-fan-driver; }
