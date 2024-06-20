@@ -117,17 +117,6 @@
 
       overlays = import ./overlays { inherit packages; };
 
-      nixpkgs-cuda = import nixpkgs {
-        system = "x86_64-linux";
-        config = {
-          allowUnfree = true;
-          cudaSupport = true;
-          # https://github.com/SomeoneSerge/nixpkgs-cuda-ci/blob/develop/nix/ci/cuda-updates.nix#L18
-          cudaCapabilities = [ "8.6" ];
-          cudaEnableForwardCompat = false;
-        };
-      };
-
       ciJobs = {
         cuda = lib.filterNurAttrs "x86_64-linux" (
           import ./default.nix {
