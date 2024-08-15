@@ -21,7 +21,7 @@ buildGoModule rec {
     description = "Show current lrc of Music Player such as Yesplaymusic and LXMusic on status bar for Ubuntu gnome";
     homepage = "https://github.com/MarsSwimmer/get_lrc";
     license = lib.licenses.asl20;
-    maintainers = with lib.maintainers; [ cryolitia ];
+    maintainers = with lib.maintainers; [ Cryolitia ];
     mainProgram = "get_lrc";
   };
 }
