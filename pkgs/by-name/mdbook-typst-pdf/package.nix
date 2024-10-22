@@ -3,6 +3,9 @@
   rustPlatform,
   fetchFromGitHub,
   stdenv,
+  openssl,
+  pkg-config,
+  darwin,
 }:
 rustPlatform.buildRustPackage rec {
   pname = "mdbook-typst-pdf";
@@ -14,6 +17,24 @@ rustPlatform.buildRustPackage rec {
     rev = "v${version}";
     hash = "sha256-uHsyQOaqRhIITaWhl0AQwzZWousmOX6Cbg74WpzeZ2M=";
   };
+
+  buildInputs =
+    [
+      openssl
+    ]
+    ++ lib.optionals stdenv.hostPlatform.isDarwin (
+      with darwin.apple_sdk.frameworks;
+      [
+        Security
+        SystemConfiguration
+      ]
+    );
+
+  nativeBuildInputs = [
+    pkg-config
+  ];
+
+  OPENSSL_NO_VENDOR = 1;
 
   cargoHash = "sha256-QhXJZ0F1RTkuPW+bebYr7l9V3V8v/T3kcW1VEcgKTqI=";
 
