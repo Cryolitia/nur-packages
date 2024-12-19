@@ -1,0 +1,21 @@
+diff --git a/Cargo.toml b/Cargo.toml
+index d2741ad..7c11837 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -11,7 +11,7 @@ license = "Apache-2.0"
+ [dependencies]
+ cn-font-utils = { version = "0.1.0", path = "crates/cn_font_utils" }
+ harfbuzz_rs_now = "2.2.6"
+-lang-unicodes = { version = "0.1.0", path = "crates/lang_unicodes" }
++lang-unicodes = { git = 'https://github.com/Cryolitia/yet-another-lang-unicodes-rs', branch = '0.1.0' }
+ log = "0.4.22"
+ md5 = "0.7.0"
+ opentype = "0.38.0"
+@@ -35,7 +35,6 @@ tonic-build = "0.12.3"
+ [workspace]
+ members = [
+     "crates/cn_font_utils",
+-    "crates/lang_unicodes",
+     "crates/proto",
+     "crates/unicode_range",
+     "packages/ffi",

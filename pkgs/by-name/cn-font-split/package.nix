@@ -1,12 +1,11 @@
 {
   stdenvNoCC,
   lib,
-  buildNpmPackage,
   rustPlatform,
   fetchFromGitHub,
-  nodejs,
+  opencc,
+  pkg-config,
   protobuf,
-  fetchNpmDeps,
 }:
 let
   version = "7.0.0-beta-4";
@@ -18,56 +17,22 @@ let
     hash = "sha256-Nvw+JnhRnL0GCjEBu3VLtvmamsUJbX5iZaklKMFiwCI=";
   };
 
-  npm-lock = ./package-lock.json;
   cargo-lock = ./Cargo.lock;
 
-  packages-json = stdenvNoCC.mkDerivation rec {
-    name = "cn-font-split-npm-package-json";
-    src = origin-src;
-
-    installPhase = ''
-      runHook preInstall
-
-      mkdir -p $out
-      cp -rv ${src}/crates/lang_unicodes/package.json $out/
-      cp -rv ${npm-lock} $out/package-lock.json
-
-      runHook postInstall
-    '';
-  };
-
-  npmDeps = buildNpmPackage {
-    pname = "cn-font-split-node-modules";
-    inherit version;
-    src = packages-json;
-
-    dontBuild = true;
-
-    npmDeps = fetchNpmDeps {
-      src = packages-json;
-      hash = "sha256-+dwYY4OUahT6jSscmaUzq++PdJhF3RtOo+9A5Pyrozk=";
-    };
-
-    installPhase = ''
-      runHook preInstall
-
-      mkdir -p $out
-      cp -r node_modules $out/
-
-      runHook postInstall
-    '';
-  };
-
-  src = stdenvNoCC.mkDerivation rec {
+  src = stdenvNoCC.mkDerivation {
     name = "cn-font-split-src";
-    src = origin-src;
+    src = lib.cleanSource origin-src;
+
+    patches = [
+      ./lang-unicodes.patch
+    ];
 
     installPhase = ''
       runHook preInstall
 
       mkdir -p $out
-      cp -r ${src}/* $out/
-      cp -r ${npmDeps}/node_modules $out/
+      rm -rf crates/lang_unicodes
+      cp -r ./* $out/
       cp ${cargo-lock} $out/Cargo.lock
 
       runHook postInstall
@@ -80,11 +45,21 @@ rustPlatform.buildRustPackage {
   inherit src version;
 
   nativeBuildInputs = [
-    nodejs
+    rustPlatform.bindgenHook
+    pkg-config
     protobuf
   ];
 
-  cargoHash = "sha256-1YEtUWdNOUSV0FjJlH6XGpoKDpkl3loJzK8aFQZn8sE=";
+  buildInputs = [
+    opencc
+  ];
+
+  cargoDeps = rustPlatform.importCargoLock {
+    lockFile = ./Cargo.lock;
+    outputHashes = {
+      "lang-unicodes-0.1.0" = "sha256-VppftEEaxVD8+9hH2K6DhkIqsdp7v/pq+Xe0I6NeMvQ=";
+    };
+  };
 
   meta = {
     description = "A revolutionary font subetter that supports CJK and any characters!";
