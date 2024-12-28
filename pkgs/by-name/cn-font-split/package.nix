@@ -1,65 +1,35 @@
 {
-  stdenvNoCC,
   lib,
   rustPlatform,
   fetchFromGitHub,
-  opencc,
+  cmake,
   pkg-config,
   protobuf,
 }:
 let
-  version = "7.0.0-beta-4";
 
-  origin-src = fetchFromGitHub {
+in
+rustPlatform.buildRustPackage rec {
+  pname = "cn-font-split";
+  version = "7.0.0-beta-9";
+
+  src = fetchFromGitHub {
     owner = "KonghaYao";
     repo = "cn-font-split";
     rev = version;
-    hash = "sha256-Nvw+JnhRnL0GCjEBu3VLtvmamsUJbX5iZaklKMFiwCI=";
+    hash = "sha256-3XOAnEmYmHTs/nNRv7YG8PGuAZ4hvcFOOWZCi02jo80=";
   };
 
-  cargo-lock = ./Cargo.lock;
-
-  src = stdenvNoCC.mkDerivation {
-    name = "cn-font-split-src";
-    src = lib.cleanSource origin-src;
-
-    patches = [
-      ./lang-unicodes.patch
-    ];
-
-    installPhase = ''
-      runHook preInstall
-
-      mkdir -p $out
-      rm -rf crates/lang_unicodes
-      cp -r ./* $out/
-      cp ${cargo-lock} $out/Cargo.lock
-
-      runHook postInstall
-    '';
-  };
-
-in
-rustPlatform.buildRustPackage {
-  pname = "cn-font-split";
-  inherit src version;
+  doCheck = false;
 
   nativeBuildInputs = [
     rustPlatform.bindgenHook
+    cmake
     pkg-config
     protobuf
   ];
 
-  buildInputs = [
-    opencc
-  ];
-
-  cargoDeps = rustPlatform.importCargoLock {
-    lockFile = ./Cargo.lock;
-    outputHashes = {
-      "lang-unicodes-0.1.0" = "sha256-VppftEEaxVD8+9hH2K6DhkIqsdp7v/pq+Xe0I6NeMvQ=";
-    };
-  };
+  cargoHash = "sha256-n5xk9g4mFN1ujkJRtzEIem+XKfKT3E68OWMCeo+FKOs=";
 
   meta = {
     description = "A revolutionary font subetter that supports CJK and any characters!";
