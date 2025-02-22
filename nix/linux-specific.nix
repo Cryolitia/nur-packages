@@ -43,6 +43,7 @@ lib.attrsets.mergeAttrsList (
       {
         bmi260 = ../pkgs/linux/bmi260;
         gpd-fan-driver = gpd-fan-driver.modulePackage;
+        xpad-noone = ../pkgs/linux/xpad-noone;
       }
   )
 )
