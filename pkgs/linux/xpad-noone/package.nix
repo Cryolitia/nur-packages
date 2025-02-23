@@ -39,6 +39,6 @@ stdenv.mkDerivation (finalAttr: {
       gpl2Only
     ];
     maintainers = with maintainers; [ Cryolitia ];
-    platforms = lib.platforms.linux;
+    platforms = [ "x86_64-linux" ];
   };
 })
