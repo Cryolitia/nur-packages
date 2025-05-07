@@ -27,7 +27,9 @@ stdenv.mkDerivation (finalAttr: {
   };
 
   patches = [
-    ./remove-syscalls.patch
+    # Remove syscalls during build to make it reproducible
+    # We also need to adjust some header paths for darwin
+    ./remove-hard-encodings.patch
   ];
 
   buildInputs = (
