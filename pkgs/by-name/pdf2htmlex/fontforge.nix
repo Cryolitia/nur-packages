@@ -13,6 +13,7 @@
   uthash,
   zeromq,
   zlib,
+  fontforge,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
@@ -35,7 +36,7 @@ stdenv.mkDerivation (finalAttrs: {
     (fetchpatch {
       name = "fontforge-cmake-set-rpath-to-the-configure-time-CMAKE_INSTALL_PREFIX";
       url = "https://github.com/fontforge/fontforge/commit/297ee9b5d6db5970ca17ebe5305189e79a1520a1.patch";
-      hash = "14qfp8pwh0vzzib4hq2nc6xhn8lc1cal1sb0lqwb2q5dijqx5kqk";
+      hash = "sha256-E8/SsYytYLE4pmDpQBULjCILu2FWYEhW/H8DyC+6DpM=";
     })
   ];
 
@@ -98,14 +99,9 @@ stdenv.mkDerivation (finalAttrs: {
     install -Dvm644 -t $out/include/ ./inc/*.h
   '';
 
-  meta = {
-    description = "Font editor";
-    homepage = "https://fontforge.github.io";
-    platforms = lib.platforms.all;
-    license = lib.licenses.bsd3;
+  meta = fontforge.meta // {
     maintainers = with lib.maintainers; [
-      philiptaron
-      ulysseszhan
+      Cryolitia
     ];
   };
 })
