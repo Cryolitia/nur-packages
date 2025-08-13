@@ -24,7 +24,7 @@ let
     owner = "poppler";
     repo = "poppler-data";
     tag = "POPPLER_DATA_0_4_9";
-    sha256 = "sha256-sNvIgxXXLuTe7JWs67Z+fv4r4smLPKpDu83fvRYoasQ=";
+    hash = "sha256-sNvIgxXXLuTe7JWs67Z+fv4r4smLPKpDu83fvRYoasQ=";
   };
   fontforge = callPackage ./fontforge.nix { };
 in
