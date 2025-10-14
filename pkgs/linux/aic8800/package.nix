@@ -37,6 +37,9 @@ stdenv.mkDerivation (finalAttr: {
     # Apply all patches in debian/patches
     dpkg-source --before-build .
 
+    find ./src -name "Makefile" -exec echo Fixing... {} \; -exec sed -i 's/CONFIG_USE_FW_REQUEST ?= n/CONFIG_USE_FW_REQUEST ?= y/g' {} \;
+    find ./src -name "Makefile" -exec echo Fixing... {} \; -exec sed -i 's/CONFIG_USE_FW_REQUEST = n/CONFIG_USE_FW_REQUEST = y/g' {} \;
+
     runHook postPatch
   '';
 
