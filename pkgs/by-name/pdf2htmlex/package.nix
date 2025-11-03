@@ -14,7 +14,12 @@
   glib,
   libjpeg,
   libpng,
+  libselinux,
+  libsepol,
+  libsysprof-capture,
   libxml2,
+  pcre2,
+  util-linux,
   xorg,
 }:
 let
@@ -79,8 +84,15 @@ stdenv.mkDerivation (finalAttrs: {
     glib
     libjpeg
     libpng
+    libsysprof-capture
     libxml2
+    pcre2
     xorg.libXdmcp
+  ]
+  ++ lib.optionals stdenv.isLinux [
+    libselinux
+    libsepol
+    util-linux
   ];
 
   nativeBuildInputs = [
